@@ -47,7 +47,7 @@ INSTALL_MONGO() {
     fi
     sudo apt-get update
     sudo apt-get install -y mongodb-org
-    sleep 5; START_MONGO_SERVICE
+    sleep 5; START_MONGO_SERVICE;
 }
 if dpkg -s mongodb-org >/dev/null 2>&1; then
     echo  "[Info] MongoDB Already Present, to install newer version remove older version first."; exit 1;
