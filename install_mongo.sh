@@ -15,7 +15,7 @@ START_MONGO_SERVICE() {
 }
 INSTALL_MONGO() {
     DETECT_OS; if [ "${OS_ID,,}" == "ubuntu" ] || [ "${OS_ID,,}" == "debian" ]; then
-        sudo apt-get install gnupg curl -y; echo
+        sudo apt-get install gnupg curl -y; echo "";
         read -p "Select MongoDB Version - [ 4.4, 5.0, 6.0 ] " MONGO_VERSION;
         if [ "${OS_ID,,}" == "ubuntu" ]; then
             if [ "${OS_VERSION%.*}" == "22" ]; then
@@ -43,14 +43,14 @@ INSTALL_MONGO() {
                 echo "deb http://repo.mongodb.org/apt/debian ${OS_CODENAME}/mongodb-org/${MONGO_VERSION} main" | sudo tee /etc/apt/sources.list.d/mongodb-org-${MONGO_VERSION}.list
             else
                 curl -fsSL https://pgp.mongodb.com/server-${MONGO_VERSION}.asc | sudo gpg -o /usr/share/keyrings/mongodb-server-${MONGO_VERSION}.gpg --dearmor
-                echo "deb [ signed-by=/usr/share/keyrings/mongodb-server-${MONGO_VERSION}.gpg ] http://repo.mongodb.org/apt/debian ${OS_CODENAME}/mongodb-org/${MONGO_VERSION} main" | sudo tee /etc/apt/sources.list.d/mongodb-org-${MONGO_VERSION}.list #10
+                echo "deb [ signed-by=/usr/share/keyrings/mongodb-server-${MONGO_VERSION}.gpg ] http://repo.mongodb.org/apt/debian ${OS_CODENAME}/mongodb-org/${MONGO_VERSION} main" | sudo tee /etc/apt/sources.list.d/mongodb-org-${MONGO_VERSION}.list
             fi
         fi
         sudo apt-get update
         sudo apt-get install -y mongodb-org
         sleep 5; START_MONGO_SERVICE;
     else
-        echo "[Info] System detected other than Ubuntu/Debian exiting..."; exit 1;
+        echo "[Info] System detected 'Operating System' other than Ubuntu/Debian exiting..."; exit 1;
     fi
 }
 if dpkg -s mongodb-org >/dev/null 2>&1; then echo "";
