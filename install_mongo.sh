@@ -54,7 +54,7 @@ INSTALL_MONGO() {
         echo "[Info] System detected 'Operating System' other than Ubuntu/Debian exiting..."; exit 1;
     fi
 }
-if dpkg -s mongodb-org >/dev/null 2>&1; then echo "";
+if dpkg -s mongodb-org >/dev/null 2>&1; then
     echo "====================================================================================="
     echo "[Info] MongoDB Already Present, to install newer version remove older version first."
     echo "====================================================================================="
