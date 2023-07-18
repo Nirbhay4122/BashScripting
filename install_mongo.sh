@@ -15,16 +15,18 @@ START_MONGO_SERVICE() {
 }
 INSTALL_MONGO() {
     DETECT_OS; if [ "${OS_ID,,}" == "ubuntu" ] || [ "${OS_ID,,}" == "debian" ]; then
-        sudo apt-get install gnupg curl -y; echo "";
+        packages=('gnupg' 'curl'); for pkg in ${packages[@]}; do if dpkg -s ${pkg} >/dev/null 2>&1; then echo -e "[Info] ${pkg} Already installed."; else apt-get install $pkg; fi done
         read -p "Select MongoDB Version - [ 4.4, 5.0, 6.0 ] " MONGO_VERSION;
         if [ "${OS_ID,,}" == "ubuntu" ]; then
             if [ "${OS_VERSION%.*}" == "22" ]; then
-                echo "Detected ${OS_ID,,}-${OS_VERSION}, there will be only availabe mongoDB version { 6.0 }"
-                read -p "To continue press [Y/y] or press any key to exit: " CONDITION
-                if [ "${CONDITION}" == "y" ] || [ "${CONDITION}" == "Y" ]; then
-                    MONGO_VERSION=6.0
+                if [ "${MONGO_VERSION}" == "6.0" ]; then
+                    MONGO_VERSION=6.0;
                 else
-                    echo "[Info] Exiting setup! - Aborted by ${USER}"; exit 1;
+                    echo "Detected ${OS_ID,,}-${OS_VERSION}, there will be only availabe mongoDB version { 6.0 }"
+                    read -p "To continue press [Y/y] / any key to exit: " CONDITION
+                    if [ "${CONDITION}" == "y" ] || [ "${CONDITION}" == "Y" ]; then
+                        MONGO_VERSION=6.0; else echo "[Info] Exiting setup! - Aborted by ${USER}"; exit 1;
+                    fi
                 fi
             fi
             curl -fsSL https://pgp.mongodb.com/server-${MONGO_VERSION}.asc | sudo gpg -o /usr/share/keyrings/mongodb-server-${MONGO_VERSION}.gpg --dearmor
@@ -46,8 +48,7 @@ INSTALL_MONGO() {
                 echo "deb [ signed-by=/usr/share/keyrings/mongodb-server-${MONGO_VERSION}.gpg ] http://repo.mongodb.org/apt/debian ${OS_CODENAME}/mongodb-org/${MONGO_VERSION} main" | sudo tee /etc/apt/sources.list.d/mongodb-org-${MONGO_VERSION}.list
             fi
         fi
-        sudo apt-get update
-        sudo apt-get install -y mongodb-org
+        sudo apt-get update; sudo apt-get install -y mongodb-org
         sleep 5; START_MONGO_SERVICE;
     else
         echo "[Info] System detected 'Operating System' other than Ubuntu/Debian exiting..."; exit 1;
@@ -55,12 +56,7 @@ INSTALL_MONGO() {
 }
 if dpkg -s mongodb-org >/dev/null 2>&1; then echo "";
     echo "====================================================================================="
-    echo  "[Info] MongoDB Already Present, to install newer version remove older version first."
-    echo "* -----------------------------------------------------------------------------------"
-    echo "* To check mongoDB service is running or not - run 'systemctl status mongod.service'"
-    echo "* To debug and see the logs - cd /var/log/mongodb"
-    echo "* To stop or restart the mongo service - 'systemctl stop mongod.service'"
-    echo "* - 'systemctl restart mongod.service'"
+    echo "[Info] MongoDB Already Present, to install newer version remove older version first."
     echo "====================================================================================="
 else
     INSTALL_MONGO; if [ "$?" == "0" ]; then echo "";
