@@ -25,7 +25,7 @@ INSTALL_MONGO() {
                     echo "Detected ${OS_ID,,}-${OS_VERSION}, there will be only availabe mongoDB version { 6.0 }"
                     read -p "To continue press [Y/y] / any key to exit: " CONDITION
                     if [ "${CONDITION}" == "y" ] || [ "${CONDITION}" == "Y" ]; then
-                        MONGO_VERSION=6.0; else echo "[Info] Exiting setup! - Aborted by ${USER}"; exit 1;
+                        MONGO_VERSION=6.0; else echo "[Info] Exiting setup! - Aborted by ${USER}!"; exit 1;
                     fi
                 fi
             fi
